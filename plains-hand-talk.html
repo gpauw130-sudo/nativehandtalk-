@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plains Hand Talk</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    background: #f5f0e6;
+    color: #2c2416;
+    line-height: 1.5;
+  }
+  header {
+    background: #8b4513;
+    color: white;
+    padding: 1.2rem 1rem;
+    text-align: center;
+  }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 0.4rem 0 0; font-size: 0.95rem; opacity: 0.9; }
+  .controls {
+    padding: 1rem;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  input, select, button {
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  input { flex: 1; min-width: 180px; }
+  button {
+    background: #8b4513;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover { background: #6b3410; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .card {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-left: 5px solid #8b4513;
+  }
+  .card h3 { margin: 0 0 0.4rem; font-size: 1.25rem; }
+  .category { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+  .description { margin: 0.6rem 0; font-size: 0.95rem; }
+  .demo {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #faf6ef;
+    border-radius: 6px;
+    margin-top: 0.6rem;
+    font-size: 2.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hand { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.85rem;
+    color: #666;
+    background: #fff;
+    border-top: 1px solid #ddd;
+  }
+  .note { font-size: 0.8rem; color: #888; margin-top: 0.4rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Plains Hand Talk</h1>
+  <p>Learn basic Plains Indian Sign Language</p>
+</header>
+
+<div class="controls">
+  <input type="search" id="search" placeholder="Search signs..." aria-label="Search signs">
+  <select id="category">
+    <option value="all">All Categories</option>
+    <option value="people">People</option>
+    <option value="nature">Nature</option>
+    <option value="actions">Actions</option>
+    <option value="basic">Basic Words</option>
+    <option value="animals">Animals</option>
+  </select>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  <p>Based on documented historical sources (William Tomkins and others). For accurate learning, study with fluent Hand Talk teachers and resources like Mike Pahsetopah’s materials.</p>
+  <p class="note">This is a free educational starter. Signs can vary by region and signer.</p>
+</footer>
+
+<script>
+const signs = [
+  { word: "Yes", category: "basic", desc: "Nod the head slightly while raising the right hand a little, fingers pointing up.", demo: "👍" },
+  { word: "No", category: "basic", desc: "Shake the head while moving the flat right hand side to side in front of the body.", demo: "✋" },
+  { word: "Good", category: "basic", desc: "Hold flat right hand, back up, near left chest. Move it smoothly out to the right and front, keeping it level.", demo: "👍" },
+  { word: "Bad", category: "basic", desc: "Hold right fist near the chest. Throw it outward and down to the right while opening the hand.", demo: "👎" },
+  { word: "Come", category: "actions", desc: "Extend right index finger and sweep it toward your face or body.", demo: "👉" },
+  { word: "Go", category: "actions", desc: "Hold flat right hand in front, palm left, pointing forward and down. Move forward and raise the fingers upward with wrist motion.", demo: "👉" },
+  { word: "I / Me", category: "people", desc: "Point to yourself with the right index finger or thumb near the chest.", demo: "👆" },
+  { word: "You", category: "people", desc: "Point toward the person with the right index finger.", demo: "👉" },
+  { word: "Man", category: "people", desc: "Hold right fist in front of the face with index finger pointing straight up.", demo: "☝️" },
+  { word: "Woman", category: "people", desc: "Hold right hand near the side of the head and make a combing motion downward.", demo: "👩" },
+  { word: "Father", category: "people", desc: "Tap the right side of the chest with a fist, then make the sign for Man.", demo: "👨" },
+  { word: "Mother", category: "people", desc: "Tap the left side of the chest, then make the sign for Woman.", demo: "👩" },
+  { word: "Sun", category: "nature", desc: "Make a small circle with thumb and index finger of the right hand and point it toward the sky.", demo: "☀️" },
+  { word: "Moon", category: "nature", desc: "Similar to Sun but held lower, often with a crescent shape suggested by the fingers.", demo: "🌙" },
+  { word: "Water", category: "nature", desc: "Bring the right hand to the mouth as if drinking from the palm, or cup the hand and tip it.", demo: "💧" },
+  { word: "Fire", category: "nature", desc: "Hold right hand with fingers up. Flick the fingers upward repeatedly from under the thumb.", demo: "🔥" },
+  { word: "Tree", category: "nature", desc: "Hold right hand upright in front of body, fingers spread, and push slightly upward.", demo: "🌳" },
+  { word: "Grass", category: "nature", desc: "Same as Tree but made lower, near the ground, with fingers moving upward.", demo: "🌱" },
+  { word: "River", category: "nature", desc: "Move the right hand in a wavy, flowing motion from left to right in front of the body.", demo: "🌊" },
+  { word: "Eat", category: "actions", desc: "Bring the right hand to the mouth as if putting food in.", demo: "🍽️" },
+  { word: "Drink", category: "actions", desc: "Cup the right hand and tip it toward the mouth.", demo: "🥤" },
+  { word: "Sleep", category: "actions", desc: "Rest the head on the right hand or place both hands beside the head and close eyes.", demo: "😴" },
+  { word: "Walk", category: "actions", desc: "Move both hands forward alternately, palms down, as if taking steps.", demo: "🚶" },
+  { word: "Run", category: "actions", desc: "Similar to Walk but faster, with more motion from the elbows.", demo: "🏃" },
+  { word: "See", category: "actions", desc: "Point the right index and middle fingers toward the eyes, then move them forward.", demo: "👀" },
+  { word: "Horse", category: "animals", desc: "Hold left hand flat. Place right index and middle fingers astride it and move forward as if riding.", demo: "🐴" },
+  { word: "Dog", category: "animals", desc: "Hold both hands in front, fingers down, and move them as if pulling a travois or load.", demo: "🐕" },
+  { word: "Buffalo", category: "animals", desc: "Place both hands at the sides of the head with fingers curved to suggest horns, then move them forward.", demo: "🦬" },
+  { word: "Bird", category: "animals", desc: "Hold right hand up with fingers together and move it upward and forward as if flying.", demo: "🐦" },
+  { word: "Question", category: "basic", desc: "Hold right hand up, palm out, and move it slightly in a questioning gesture (used before a question).", demo: "❓" }
+];
+
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('search');
+const categorySelect = document.getElementById('category');
+
+function render(list) {
+  grid.innerHTML = list.map(s => `
+    <div class="card">
+      <div class="category">${s.category}</div>
+      <h3>${s.word}</h3>
+      <p class="description">${s.desc}</p>
+      <div class="demo"><span class="hand">${s.demo}</span></div>
+    </div>
+  `).join('');
+}
+
+function filter() {
+  const q = searchInput.value.toLowerCase();
+  const cat = categorySelect.value;
+  const filtered = signs.filter(s => 
+    (cat === 'all' || s.category === cat) &&
+    (s.word.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q))
+  );
+  render(filtered);
+}
+
+searchInput.addEventListener('input', filter);
+categorySelect.addEventListener('change', filter);
+
+render(signs);
+</script>
+</body>
+</html>
